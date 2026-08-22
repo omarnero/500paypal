@@ -1,23 +1,32 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { Header } from './components/Header';
+import { HeroSection } from './components/HeroSection';
+import { HowItWorks } from './components/HowItWorks';
+import { TrustFooter } from './components/TrustFooter';
+import { EligibilityModal } from './components/EligibilityModal';
 
 function App() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app-viewport">
+      {/* Top Header */}
+      <Header />
+
+      {/* Main Hero Section */}
+      <HeroSection onOpenModal={() => setIsModalOpen(true)} />
+
+      {/* 3-Step How It Works Guide */}
+      <HowItWorks />
+
+      {/* Trust & Security Footer */}
+      <TrustFooter />
+
+      {/* Interactive Eligibility Check Questionnaire Modal */}
+      <EligibilityModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 }
