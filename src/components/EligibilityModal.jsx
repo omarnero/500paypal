@@ -5,7 +5,7 @@ import confetti from 'canvas-confetti';
 export const EligibilityModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [answers, setAnswers] = useState({
+  const [, setAnswers] = useState({
     userStatus: '',
     payoutMethod: ''
   });
@@ -111,13 +111,13 @@ export const EligibilityModal = ({ isOpen, onClose }) => {
               Verifying your profile against today's allocation quota.
             </p>
             <div style={{ background: '#f1f5f9', borderRadius: '10px', height: '10px', overflow: 'hidden', width: '100%' }}>
-              <div 
-                style={{ 
-                  width: `${loadingProgress}%`, 
-                  height: '100%', 
-                  background: 'linear-gradient(90deg, #74d41e, #58b012)', 
-                  transition: 'width 0.15s ease-in-out' 
-                }} 
+              <div
+                style={{
+                  width: `${loadingProgress}%`,
+                  height: '100%',
+                  background: 'linear-gradient(90deg, #74d41e, #58b012)',
+                  transition: 'width 0.15s ease-in-out'
+                }}
               />
             </div>
             <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#58b012', marginTop: '8px' }}>
@@ -140,7 +140,7 @@ export const EligibilityModal = ({ isOpen, onClose }) => {
             <h3 className="modal-heading" style={{ fontSize: '1.4rem', marginBottom: '6px' }}>
               You Qualify For $500!
             </h3>
-            
+
             <p style={{ fontSize: '0.88rem', color: '#475569', marginBottom: '20px' }}>
               Congratulations! Your profile has been approved for today's $500 PayPal reward voucher.
             </p>
@@ -150,9 +150,9 @@ export const EligibilityModal = ({ isOpen, onClose }) => {
               <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#003087', letterSpacing: '0.1em' }}>PP-500-QUALIFIED</div>
             </div>
 
-            <button 
-              className="cta-button" 
-              onClick={handleReset} 
+            <button
+              className="cta-button"
+              onClick={handleReset}
               style={{ width: '100%', fontSize: '1rem', padding: '16px' }}
             >
               CLAIM YOUR REWARD NOW
