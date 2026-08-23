@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X, ShieldCheck, HelpCircle, FileText, Gift } from 'lucide-react';
-
+import paypalLogo from "../assets/paypalLogo.png"
 export const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -8,12 +8,12 @@ export const Header = () => {
     <>
       <header className="site-header">
         <div className="logo-wrapper">
-          <img src="https://www.paypalobjects.com/webstatic/i/logo/rebrand/ppcom-white.svg" alt="PayPal" className="paypal-logo-svg" style={{ height: '28px', width: 'auto' }} />
+          <img src={paypalLogo} alt="PayPal" className="paypal-logo-svg" style={{ height: '40px', width: '100%' }} />
         </div>
 
-        <button 
-          className="menu-btn" 
-          onClick={() => setIsDrawerOpen(!isDrawerOpen)} 
+        <button
+          className="menu-btn"
+          onClick={() => setIsDrawerOpen(!isDrawerOpen)}
           aria-label="Toggle Navigation Menu"
         >
           {isDrawerOpen ? <X size={26} /> : <Menu size={26} />}
@@ -27,7 +27,7 @@ export const Header = () => {
           <nav className="drawer-menu">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
               <span style={{ fontWeight: 800, fontSize: '1.1rem', color: '#fff' }}>Menu</span>
-              <button 
+              <button
                 onClick={() => setIsDrawerOpen(false)}
                 style={{ background: 'none', border: 'none', color: '#fff', cursor: 'pointer' }}
               >

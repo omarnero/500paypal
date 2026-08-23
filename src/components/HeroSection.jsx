@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShieldCheck, ArrowRight, Lock } from 'lucide-react';
-
+import paypal from '../assets/card.png';
 export const HeroSection = ({ onOpenModal }) => {
   return (
     <section className="hero-section" id="eligibility">
@@ -37,26 +37,10 @@ export const HeroSection = ({ onOpenModal }) => {
 
           {/* 3D PayPal Reward Card on Stage */}
           <div className="reward-card-stage">
-            <div className="paypal-reward-card">
-              <div className="card-header-logo">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg"
-                  alt="PayPal"
-                  style={{ height: '32px', width: 'auto', objectFit: 'contain' }}
-                />
-              </div>
 
-              <div className="card-divider" />
-
-              <div className="card-reward-label">REWARD</div>
-              <div className="card-amount">$500</div>
-
-              {/* Blue Ribbon Bow */}
-              <div className="card-ribbon">
-                <div className="ribbon-bow" />
-              </div>
+            <div >
+              <img src={paypal} alt="PayPal" style={{ height: '100%', width: '100%' }} className="paypal-reward-card" />
             </div>
-
             {/* Podium Stage Base */}
             <div className="podium-stage" />
           </div>
@@ -76,6 +60,6 @@ export const HeroSection = ({ onOpenModal }) => {
           <span>Secure • Fast • Easy</span>
         </div>
       </div>
-    </section>
+    </section >
   );
 };

