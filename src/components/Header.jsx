@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X, ShieldCheck, HelpCircle, FileText, Gift } from 'lucide-react';
-import paypalLogo from "../assets/paypalLogo.png"
+import paypalLogo from "../assets/logo.png"
 export const Header = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
